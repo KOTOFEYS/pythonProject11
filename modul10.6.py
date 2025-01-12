@@ -38,6 +38,20 @@ class Cafe:
                 self.queue.put(guests[i])
                 print(f'{list(guests)[i].name} в очереди')
 
+    def discuss_guests(self):
+        while not (self.queue.empty()):
+            for table in self.tables:
+                if not (table.guest is None) and not (table.guest.is_alive()):
+                    print(f'{table.guest.name} покушал(-а) и ушёл(ушла)')
+                    print(f'Стол номер {table.number} свободен')
+                    table.guest = None
+                if (not (self.queue.empty())) and table.guest is None:
+                    table.guest = self.queue.get()
+                    print(f'{table.guest.name} вышел(-ла) из очереди и сел(-а) за стол номер {table.number}')
+                    thr1 = table.guest
+                    thr1.start()
+                    Cafe.list_thr.append(thr1)
+
 
 tables = [Table(number) for number in range(1, 6)]
 
@@ -51,4 +65,5 @@ guests = [Guest(name) for name in guests_names]
 cafe = Cafe(*tables)
 
 cafe.guest_arrival(*guests)
+cafe.discuss_guests()
 
